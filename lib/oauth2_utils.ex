@@ -207,6 +207,15 @@ defmodule OAuth2Utils do
     "request_uri_parameter_supported" => [standard_set: :oidc],
     "require_request_uri_registration" => [standard_set: :oidc]
   }
+  @grant_types %{
+    "authorization_code" => [standard_set: :oauth2, uses_authorization_endpoint: true],
+    "implicit" => [standard_set: :oauth2, uses_authorization_endpoint: true],
+    "password" => [standard_set: :oauth2, uses_authorization_endpoint: false],
+    "client_credentials" => [standard_set: :oauth2, uses_authorization_endpoint: false],
+    "refresh_token" => [standard_set: :oauth2, uses_authorization_endpoint: false],
+    "urn:ietf:params:oauth:grant-type:jwt-bearer" => [standard_set: :oauth2, uses_authorization_endpoint: false],
+    "urn:ietf:params:oauth:grant-type:saml2-bearer" => [standard_set: :oauth2, uses_authorization_endpoint: false]
+  }
 
   @type standard_set :: :oauth2 | :oidc | :uma2
   @type standard_sets :: [standard_set]
@@ -222,6 +231,7 @@ defmodule OAuth2Utils do
   @type pkce_code_challenge_method :: String.t
   @type token_introspection_response_member :: String.t
   @type authorization_server_metadata :: String.t
+  @type grant_type :: String.t
 
   @doc """
   Returns the access token types as documented in the [IANA registry](https://www.iana.org/assignments/oauth-parameters/oauth-parameters.xhtml#token-types)
@@ -450,4 +460,37 @@ defmodule OAuth2Utils do
     |> Enum.unzip()
     |> elem(0)
   end
+
+  @doc """
+  Returns the grant types as documented in ["OAuth 2.0 Dynamic Client Registration Protocol [RFC7591]"](https://tools.ietf.org/html/rfc7591)
+
+  ## Example
+    iex> OAuth2Utils.get_grant_types()
+    ["authorization_code", "client_credentials", "implicit", "password",
+     "refresh_token", "urn:ietf:params:oauth:grant-type:jwt-bearer",
+     "urn:ietf:params:oauth:grant-type:saml2-bearer"]
+  """
+
+  @spec get_grant_types(standard_sets) :: [grant_type]
+  def get_grant_types(standard_sets \\ [:oauth2]) do
+    @grant_types
+    |> Enum.filter(fn {_, v} -> Keyword.get(v, :standard_set) in standard_sets end)
+    |> Enum.unzip()
+    |> elem(0)
+  end
+
+  @doc """
+  Returns `true` if the grant type requires the use of the authorization endpoint, `false` otherwise
+
+  ## Example
+    iex> OAuth2Utils.uses_authorization_endpoint?("implicit")
+    true
+    iex> OAuth2Utils.uses_authorization_endpoint?("client_credentials")
+    false
+    iex> OAuth2Utils.uses_authorization_endpoint?("password")
+    false
+  """
+
+  @spec uses_authorization_endpoint?(grant_type) :: boolean()
+  def uses_authorization_endpoint?(grant_type), do: @grant_types[grant_type][:uses_authorization_endpoint] == true
 end
