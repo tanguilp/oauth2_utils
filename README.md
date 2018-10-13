@@ -1,21 +1,11 @@
 # OAuth2Utils
 
-**TODO: Add description**
+Util functions for OAuth2 and connected (OpenID Connect, UMA2) standards
 
-## Installation
+Standard sets are the following:
+* `:oauth2`: refers to RFC6749 and all other RFCs published by the IETF
+* `:oidc`: refers to OpenID Connect ([https://openid.net/developers/specs/](speifications))
+* `:uma2`: refers to User Managed Access specifications published by Kantara initiative
+Note that regarding origin of values, IETF have precedence over the others.
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `oauth2_utils` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:oauth2_utils, "~> 0.1.0"}
-  ]
-end
-```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/oauth2_utils](https://hexdocs.pm/oauth2_utils).
 

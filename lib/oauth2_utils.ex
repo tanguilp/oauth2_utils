@@ -1,6 +1,12 @@
 defmodule OAuth2Utils do
   @moduledoc """
-  Documentation for OAuth2Utils.
+  Util functions for OAuth2 and connected (OpenID Connect, UMA2) standards
+
+  Standard sets are the following:
+  * `:oauth2`: refers to RFC6749 and all other RFCs published by the IETF
+  * `:oidc`: refers to OpenID Connect ([https://openid.net/developers/specs/](speifications))
+  * `:uma2`: refers to User Managed Access specifications published by Kantara initiative
+  Note that regarding origin of values, IETF have precedence over the others.
   """
 
   @access_token_types %{
@@ -237,10 +243,10 @@ defmodule OAuth2Utils do
   Returns the access token types as documented in the [IANA registry](https://www.iana.org/assignments/oauth-parameters/oauth-parameters.xhtml#token-types)
 
   ## Example
-
-      iex> OAuth2Utils.get_access_token_types()
-      ["Bearer"]
-
+  ```elixir
+   iex> OAuth2Utils.get_access_token_types()
+   ["Bearer"]
+  ```
   """
 
   @spec get_access_token_types(standard_sets) :: [access_token_type]
@@ -255,9 +261,11 @@ defmodule OAuth2Utils do
   Returns the authorization endpoint response types as documented in the [IANA registry](https://www.iana.org/assignments/oauth-parameters/oauth-parameters.xhtml#endpoint)
 
   ## Example
+  ```elixir
     iex> OAuth2Utils.get_authorization_endpoint_response_types([:oauth2, :oidc])
     ["code", "code id_token", "code id_token token", "code token", "id_token",
      "id_token token", "none", "token"]
+  ```
   """
 
   @spec get_authorization_endpoint_response_types(standard_sets) :: [authorization_endpoint_response_type]
@@ -272,12 +280,13 @@ defmodule OAuth2Utils do
   Returns the extension errors as documented in the [IANA registry](https://www.iana.org/assignments/oauth-parameters/oauth-parameters.xhtml#extensions-error)
 
   ## Example
+  ```elixir
     iex> OAuth2Utils.get_extension_errors([:oidc])
     ["consent_required", "interaction_required", "invalid_request_object",
      "invalid_request_uri", "login_required", "registration_not_supported",
      "request_not_supported", "request_uri_not_supported",
      "session_selection_required"]
-
+  ```
   """
 
   @spec get_extension_errors(standard_sets) :: [extension_error]
@@ -292,8 +301,10 @@ defmodule OAuth2Utils do
   Returns the oauth parameters as documented in the [IANA registry](https://www.iana.org/assignments/oauth-parameters/oauth-parameters.xhtml#parameters)
 
   ## Example
+  ```elixir
     iex> OAuth2Utils.get_parameters([:uma2])
     ["rpt", "pct", "claim_token", "upgraded", "ticket"]
+  ```
   """
 
   @spec get_parameters(standard_sets) :: [parameter]
@@ -311,9 +322,11 @@ defmodule OAuth2Utils do
   * `:client_request` and `:authorization_server_response` specific values from UMA 2.0 specification
 
   ## Example
+  ```elixir
     iex> OAuth2Utils.get_parameters_for_location(:authorization_response, [:oauth2, :oidc])
     ["error_uri", "error", "error_description", "token_type", "access_token",
      "state", "scope", "expires_in", "code", "session_state", "id_token"]
+  ```
   """
 
   @spec get_parameters_for_location(parameter_location, standard_sets) :: [parameter]
@@ -328,8 +341,10 @@ defmodule OAuth2Utils do
   Returns the token type hints as documented in the [IANA registry](https://www.iana.org/assignments/oauth-parameters/oauth-parameters.xhtml#token-type-hint)
 
   ## Example
+  ```elixir
     iex> OAuth2Utils.get_token_type_hints()
     ["access_token", "refresh_token"]
+  ```
   """
 
   @spec get_token_type_hints(standard_sets) :: [token_type_hint]
@@ -344,12 +359,14 @@ defmodule OAuth2Utils do
   Returns the OAuth2 URIs as documented in the [IANA registry](https://www.iana.org/assignments/oauth-parameters/oauth-parameters.xhtml#uri)
 
   ## Example
+  ```elixir
     iex> OAuth2Utils.get_uris()
     ["urn:ietf:params:oauth:grant-type:jwt-bearer",
      "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
      "urn:ietf:params:oauth:grant-type:saml2-bearer",
      "urn:ietf:params:oauth:client-assertion-type:saml2-bearer",
      "urn:ietf:params:oauth:token-type:jwt"]
+  ```
   """
 
   @spec get_uris(standard_sets) :: [uri]
@@ -364,6 +381,7 @@ defmodule OAuth2Utils do
   Returns dynamic client registration metadata as documented in the [IANA registry](https://www.iana.org/assignments/oauth-parameters/oauth-parameters.xhtml#client-metadata)
 
   ## Example
+  ```elixir
     iex> OAuth2Utils.get_dynamic_client_registration_metadata([:oidc])
     ["default_max_age", "require_auth_time", "userinfo_signed_response_alg",
      "userinfo_encrypted_response_enc", "token_endpoint_auth_signing_alg",
@@ -373,6 +391,7 @@ defmodule OAuth2Utils do
      "id_token_encrypted_response_alg", "default_acr_values", "subject_type",
      "initiate_login_uri", "request_object_signing_alg",
      "id_token_encrypted_response_enc"]
+  ```
   """
 
   @spec get_dynamic_client_registration_metadata(standard_sets) :: [dynamic_client_registration_metadata]
@@ -387,11 +406,13 @@ defmodule OAuth2Utils do
   Returns the token endpoint authentication methods as documented in the [IANA registry](https://www.iana.org/assignments/oauth-parameters/oauth-parameters.xhtml#token-endpoint-auth-method)
 
   ## Example
+  ```elixir
     iex> OAuth2Utils.get_token_endpoint_authentication_methods()
     ["client_secret_basic", "client_secret_post", "none"]
     iex> OAuth2Utils.get_token_endpoint_authentication_methods([:oauth2, :oidc])
     ["client_secret_basic", "client_secret_jwt", "client_secret_post", "none",
      "private_key_jwt"]
+  ```
   """
 
   @spec get_token_endpoint_authentication_methods(standard_sets) :: [token_endpoint_authentication_method]
@@ -406,8 +427,10 @@ defmodule OAuth2Utils do
   Returns the PKCE code challenge methods as documented in the [IANA registry](https://www.iana.org/assignments/oauth-parameters/oauth-parameters.xhtml#pkce-code-challenge-method)
 
   ## Example
+  ```elixir
     iex> OAuth2Utils.get_pkce_code_challenge_methods()
     ["S256", "plain"]
+  ```
   """
 
   @spec get_pkce_code_challenge_methods(standard_sets) :: [pkce_code_challenge_method]
@@ -422,8 +445,10 @@ defmodule OAuth2Utils do
   Returns the token introspection response members as documented in the [IANA registry](https://www.iana.org/assignments/oauth-parameters/oauth-parameters.xhtml#token-introspection-response)
 
   ## Example
+  ```elixir
     iex> OAuth2Utils.get_token_introspection_response_members([:uma2])
     ["permissions"]
+  ```
   """
 
   @spec get_token_introspection_response_members(standard_sets) :: [token_introspection_response_member]
@@ -439,6 +464,7 @@ defmodule OAuth2Utils do
   and in the [Open ID Connect Discovery 1.0](https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata) specification
 
   ## Example
+  ```elixir
     iex> OAuth2Utils.get_authorization_server_metadata([:oidc])
     ["require_request_uri_registration", "claims_parameter_supported",
      "subject_types_supported", "id_token_encryption_enc_values_supported",
@@ -451,6 +477,7 @@ defmodule OAuth2Utils do
      "request_parameter_supported", "userinfo_encryption_alg_values_supported",
      "acr_values_supported", "claims_supported",
      "id_token_signing_alg_values_supported"]
+  ```
   """
 
   @spec get_authorization_server_metadata(standard_sets) :: [authorization_server_metadata]
@@ -465,10 +492,13 @@ defmodule OAuth2Utils do
   Returns the grant types as documented in ["OAuth 2.0 Dynamic Client Registration Protocol [RFC7591]"](https://tools.ietf.org/html/rfc7591)
 
   ## Example
+  ```elixir
+    iex> OAuth2Utils.get_authorization_server_metadata([:oidc])
     iex> OAuth2Utils.get_grant_types()
     ["authorization_code", "client_credentials", "implicit", "password",
      "refresh_token", "urn:ietf:params:oauth:grant-type:jwt-bearer",
      "urn:ietf:params:oauth:grant-type:saml2-bearer"]
+  ```
   """
 
   @spec get_grant_types(standard_sets) :: [grant_type]
@@ -483,12 +513,14 @@ defmodule OAuth2Utils do
   Returns `true` if the grant type requires the use of the authorization endpoint, `false` otherwise
 
   ## Example
+  ```elixir
     iex> OAuth2Utils.uses_authorization_endpoint?("implicit")
     true
     iex> OAuth2Utils.uses_authorization_endpoint?("client_credentials")
     false
     iex> OAuth2Utils.uses_authorization_endpoint?("password")
     false
+  ```
   """
 
   @spec uses_authorization_endpoint?(grant_type) :: boolean()
