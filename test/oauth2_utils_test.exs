@@ -1,8 +1,14 @@
 defmodule OAuth2UtilsTest do
   use ExUnit.Case
-  doctest OAuth2Utils
+  import OAuth2Utils.Scope
 
-  test "greets the world" do
-    assert OAuth2Utils.hello() == :world
+  test "OAuth2 scopes" do
+    assert  oauth2_scope?("abc")
+    assert  oauth2_scope?("abc:def")
+    assert  oauth2_scope?("{~~~~~}")
+
+    refute oauth2_scope?("a b c")
+    refute oauth2_scope?("a\\c")
+    refute oauth2_scope?("abc\x05def")
   end
 end
