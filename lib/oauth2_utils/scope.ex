@@ -52,6 +52,17 @@ defmodule OAuth2Utils.Scope do
   defmodule Set do
     @type t :: MapSet.t(OAuth2Utils.Scope.t)
 
+    defmodule InvalidScopeParam do
+      defexception message: "Invalid scope parameter"
+
+      @moduledoc """
+      Exception raised when a scope param is invalid. Possible reasons:
+      - Additional space before, after or between the scopes
+      - Forbidden caracter
+      - Empty string
+      """
+    end
+
     defdelegate delete(map_set, value), to: MapSet
     defdelegate difference(map_set1, map_set2), to: MapSet
     defdelegate disjoint?(map_set1, map_set2), to: MapSet
@@ -59,13 +70,28 @@ defmodule OAuth2Utils.Scope do
     defdelegate intersection(map_set1, map_set2), to: MapSet
     defdelegate member?(map_set, value), to: MapSet
     defdelegate new(), to: MapSet
-    defdelegate new(enumerable), to: MapSet
     defdelegate new(enumerable, transform), to: MapSet
     defdelegate put(map_set, value), to: MapSet
     defdelegate size(map_set), to: MapSet
     defdelegate subset?(map_set1, map_set2), to: MapSet
     defdelegate to_list(map_set), to: MapSet
     defdelegate union(map_set1, map_set2), to: MapSet
+
+    @doc """
+    Returns a new `OAuth2Utils.Scope.Set.t`
+
+    This functions extends the `MapSet.new/1` the following way:
+    - if the param is `nil`, returns an empty `OAuth2Utils.Scope.Set.t`
+    - if the param is the empty string `""`, returns an empty `OAuth2Utils.Scope.Set.t`
+    - if the param is a non-empty string, call `from_scope_param!/1`
+    - otherwise, calls `MapSet.new/1`
+    """
+
+    @spec new(Enumerable.t | String.t | nil) :: t
+    def new(nil), do: new()
+    def new(""), do: new()
+    def new(str) when is_binary(str), do: from_scope_param!(str)
+    def new(val), do: MapSet.new(val)
 
     @doc """
     Returns a `{:ok, scope_set}` structure from a scope param if the scope param
@@ -88,6 +114,23 @@ defmodule OAuth2Utils.Scope do
     end
 
     @doc """
+    Returns a scope set from a scope param if the scope param
+    is well-formed, raise an `InvalidScopeParam` exception otherwise
+    ```
+    """
+
+    @spec from_scope_param!(OAuth2Utils.Scope.scope_param) :: t
+    def from_scope_param!(scope_param) do
+      case from_scope_param(scope_param) do
+        {:ok, val} ->
+          val
+
+        _ ->
+          raise InvalidScopeParam
+      end
+    end
+
+    @doc """
     Returns a conform scope param string from a scope set
 
     ## Example
@@ -96,7 +139,7 @@ defmodule OAuth2Utils.Scope do
     "calendar.read calendar.write document.read"
     ```
     """
-    
+
     @spec to_scope_param(t) :: OAuth2Utils.Scope.scope_param
     def to_scope_param(%MapSet{} = scope_set) do
       scope_set
