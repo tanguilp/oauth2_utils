@@ -238,6 +238,7 @@ defmodule OAuth2Utils do
   @type token_introspection_response_member :: String.t
   @type authorization_server_metadata :: String.t
   @type grant_type :: String.t
+  @type client_id :: String.t
 
   @doc """
   Returns the access token types as documented in the [IANA registry](https://www.iana.org/assignments/oauth-parameters/oauth-parameters.xhtml#token-types)
@@ -525,4 +526,17 @@ defmodule OAuth2Utils do
 
   @spec uses_authorization_endpoint?(grant_type) :: boolean()
   def uses_authorization_endpoint?(grant_type), do: @grant_types[grant_type][:uses_authorization_endpoint] == true
+
+  @doc """
+  Returns `true` if the parameter is a valid client_id, `false` otherwise
+
+  ## Example
+  ```elixir
+  ```
+  """
+
+  @spec client_id?(client_id) :: boolean()
+  def client_id?(val) do
+    Regex.run(~r{^[\x20-\x7E]*$}, val) != nil
+  end
 end
