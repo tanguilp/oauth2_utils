@@ -26,6 +26,7 @@ defmodule OAuth2UtilsTest do
 
   test "client_id regex" do
     assert OAuth2Utils.client_id?("  &$@($9023 ewfqkamzql<,fqh.o UIGYTDTUFKWL")
+    assert OAuth2Utils.client_id?("")
 
     refute OAuth2Utils.client_id?("\x16dasxgrsbhd")
     refute OAuth2Utils.client_id?("zareeasr<zgw\x9axezfregqzw")
