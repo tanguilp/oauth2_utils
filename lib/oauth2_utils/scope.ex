@@ -95,7 +95,7 @@ defmodule OAuth2Utils.Scope do
 
     @doc """
     Returns a `{:ok, scope_set}` structure from a scope param if the scope param
-    is well-formed, `:error` otherwise
+    is well-formed, `{:error, :malformed_scope_param}` otherwise
 
     ## Example
     ```elixir
@@ -104,12 +104,13 @@ defmodule OAuth2Utils.Scope do
     ```
     """
 
-    @spec from_scope_param(OAuth2Utils.Scope.scope_param) :: t
+    @spec from_scope_param(OAuth2Utils.Scope.scope_param) ::
+      {:ok, t()} | {:error, :malformed_scope_param}
     def from_scope_param(scope_param) do
       if OAuth2Utils.Scope.oauth2_scope_param?(scope_param) do
         {:ok, new(String.split(scope_param))}
       else
-        :error
+        {:error, :malformed_scope_param}
       end
     end
 
@@ -125,7 +126,7 @@ defmodule OAuth2Utils.Scope do
         {:ok, val} ->
           val
 
-        _ ->
+        {:error, _} ->
           raise InvalidScopeParam
       end
     end
