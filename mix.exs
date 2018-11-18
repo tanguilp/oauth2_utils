@@ -19,6 +19,7 @@ defmodule OAuth2Utils.MixProject do
 
   defp deps do
     [
+      {:dialyxir, "~> 1.0.0-rc.4", only: [:dev], runtime: false},
       {:ex_doc, "~> 0.19", only: :dev, runtime: false}
     ]
   end
