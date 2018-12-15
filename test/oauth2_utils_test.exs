@@ -24,11 +24,11 @@ defmodule OAuth2UtilsTest do
     refute oauth2_scope_param?("a b c ")
   end
 
-  test "client_id regex" do
-    assert OAuth2Utils.client_id?("  &$@($9023 ewfqkamzql<,fqh.o UIGYTDTUFKWL")
-    assert OAuth2Utils.client_id?("")
+  test "valid_client_id_param regex" do
+    assert OAuth2Utils.valid_client_id_param?("  &$@($9023 ewfqkamzql<,fqh.o UIGYTDTUFKWL")
+    assert OAuth2Utils.valid_client_id_param?("")
 
-    refute OAuth2Utils.client_id?("\x16dasxgrsbhd")
-    refute OAuth2Utils.client_id?("zareeasr<zgw\x9axezfregqzw")
+    refute OAuth2Utils.valid_client_id_param?("\x16dasxgrsbhd")
+    refute OAuth2Utils.valid_client_id_param?("zareeasr<zgw\x9axezfregqzw")
   end
 end

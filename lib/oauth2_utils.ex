@@ -239,6 +239,7 @@ defmodule OAuth2Utils do
   @type authorization_server_metadata :: String.t
   @type grant_type :: String.t
   @type client_id :: String.t
+  @type client_secret :: String.t
 
   @doc """
   Returns the access token types as documented in the [IANA registry](https://www.iana.org/assignments/oauth-parameters/oauth-parameters.xhtml#token-types)
@@ -527,16 +528,111 @@ defmodule OAuth2Utils do
   @spec uses_authorization_endpoint?(grant_type) :: boolean()
   def uses_authorization_endpoint?(grant_type), do: @grant_types[grant_type][:uses_authorization_endpoint] == true
 
+  @vschar "\\x20-\\x7E"
+  #@nqchar "\\x21\\x23-\\x5B\\x5D-\\x7E"
+  #@nqschar "\\x20-\\x21\\x23-\\x5B\\x5D-\\x7E"
+  @unicodecharnocrlf "\\x09\\x20-\\x7E\\x80-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{10000}-\\x{10FFFF}"
+
   @doc """
   Returns `true` if the parameter is a valid client_id, `false` otherwise
 
   ## Example
   ```elixir
+  iex> OAuth2Utils.valid_client_id_param?("my_client_23")
+  true
+  iex> OAuth2Utils.valid_client_id_param?("my_client¯23")
+  false
   ```
   """
 
-  @spec client_id?(client_id) :: boolean()
-  def client_id?(val) do
-    Regex.run(~r{^[\x20-\x7E]*$}, val) != nil
+  @spec valid_client_id_param?(client_id) :: boolean()
+  def valid_client_id_param?(client_id) do
+    Regex.run(~r{^[#{@vschar}]*$}, client_id) != nil
+  end
+
+  @doc """
+  Returns `true` if the parameter is a valid client secret, `false` otherwise
+  """
+
+  @spec valid_client_secret_param?(client_secret) :: boolean()
+  def valid_client_secret_param?(client_secret) do
+    Regex.run(~r{^[#{@vschar}]*$}, client_secret) != nil
+  end
+  @doc """
+  Returns `true` is the authorization code parameter is valid, `false` otherwise
+
+  ## Example
+  ```elixir
+  iex> OAuth2Utils.valid_authorization_code_param?("WIrgzqwBTQrgx*^TcyhBXonuCQ;',oi2~QO")
+  true
+  iex> OAuth2Utils.valid_authorization_code_param?("Hï")
+  false
+  ```
+  """
+
+  @spec valid_authorization_code_param?(String.t()) :: boolean
+  def valid_authorization_code_param?(authorization_code) do
+    Regex.run(~r{^[#{@vschar}]+$}, authorization_code) != nil
+  end
+
+  @doc """
+  Returns `true` is the access token parameter is valid, `false` otherwise
+
+  ## Example
+  ```elixir
+  iex> OAuth2Utils.valid_access_token_param?("2YotnFZFEjr1zCsicMWpAA")
+  true
+  iex> OAuth2Utils.valid_access_token_param?("2YоtnFZFEjr1zCsicMWpАA")
+  false
+  ```
+  """
+
+  @spec valid_access_token_param?(String.t()) :: boolean
+  def valid_access_token_param?(access_token) do
+    Regex.run(~r{^[#{@vschar}]+$}, access_token) != nil
+  end
+
+  @doc """
+  Returns `true` is the refresh token parameter is valid, `false` otherwise
+
+  ## Example
+  ```elixir
+  iex> OAuth2Utils.valid_refresh_token_param?("tGzv3JOkF0XG5Qx2TlKWIA")
+  true
+  iex> OAuth2Utils.valid_refresh_token_param?("tGzv3J\x13OkF0XG5Qx2TlKWIA")
+  false
+  ```
+  """
+
+  @spec valid_refresh_token_param?(String.t()) :: boolean
+  def valid_refresh_token_param?(refresh_token) do
+    Regex.run(~r{^[#{@vschar}]+$}, refresh_token) != nil
+  end
+
+  @doc """
+  Returns `true` is the parameter is a valid RFC6749 username parameter,
+  `false` otherwise
+
+  ```elixir
+  iex> OAuth2Utils.valid_username_param?("молду")
+  true
+  iex> OAuth2Utils.valid_username_param?("john\nsmith")
+  false
+  ```
+  """
+
+  @spec valid_username_param?(String.t()) :: boolean
+  def valid_username_param?(username) do
+    Regex.run(~r{^[#{@unicodecharnocrlf}]*$}iu, username) != nil
+  end
+
+  @doc """
+  Returns `true` is the parameter is a valid RFC6749 password parameter,
+  `false` otherwise
+  """
+
+  @spec valid_password_param?(String.t()) :: boolean
+  def valid_password_param?(password) do
+    Regex.run(~r{^[#{@unicodecharnocrlf}]*$}iu, password) != nil
   end
 end
