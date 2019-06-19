@@ -8,12 +8,12 @@ defmodule OAuth2Utils.Scope do
 
   Example: `mail:read`
   """
-  @type scope :: String.t
+  @type scope :: String.t()
 
   @typedoc """
   Scope param (i.e. non-empty list of space-separated scopes) as defined in [RFC6749 section 3.3](https://tools.ietf.org/html/rfc6749#section-3.3)
   """
-  @type scope_param :: String.t
+  @type scope_param :: String.t()
 
   @doc """
   Checks if the param is a valid OAuth2 scope
@@ -50,7 +50,7 @@ defmodule OAuth2Utils.Scope do
   end
 
   defmodule Set do
-    @type t :: MapSet.t(OAuth2Utils.Scope.t)
+    @type t :: MapSet.t(OAuth2Utils.Scope.scope())
 
     defmodule InvalidScopeParam do
       defexception message: "Invalid scope parameter"
@@ -142,7 +142,7 @@ defmodule OAuth2Utils.Scope do
     """
 
     @spec to_scope_param(t) :: OAuth2Utils.Scope.scope_param
-    def to_scope_param(%MapSet{} = scope_set) do
+    def to_scope_param(scope_set) do
       scope_set
       |> to_list()
       |> Enum.join(" ")
