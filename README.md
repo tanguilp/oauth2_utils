@@ -8,4 +8,11 @@ Standard sets are the following:
 * `:uma2`: refers to User Managed Access specifications published by Kantara initiative
 Note that regarding origin of values, IETF have precedence over the others.
 
+## Installation
 
+```elixir
+def deps do
+  [
+    {:oauth2_utils, "~> 0.1.0"}
+  ]
+end
